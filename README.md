@@ -69,6 +69,16 @@ These are intended for multi-turn interactions where the agent needs to remember
 | User Preference Violation | Ignoring known user preferences, constraints, or prior instructions |
 | Unnecessary Clarification | Asking for clarification when enough information was available to proceed |
 
+These evals are based on the idea that a chatbot or agent participates in an ongoing dialogue rather than producing isolated responses. Each turn should preserve and update the shared conversation state: what has already been established, what the user wants, what constraints are active, and what preferences or assumptions should carry forward.
+
+The evals draw on several related ideas:
+
+- **Common ground / conversational grounding:** participants build shared understanding over time. Context Retention Failure detects when the agent ignores information that should already be part of the shared state.
+- **Dialogue state tracking:** task-oriented dialogue systems maintain a representation of prior turns, user goals, and constraints. Context Retention Failure and Unnecessary Clarification detect failures to use that state.
+- **Conversational coherence:** responses should not contradict earlier statements, user-provided information, or established context unless the agent explicitly explains a revision. This motivates the Contradiction eval.
+- **User modelling and preference adaptation:** agents should respect known user preferences and prior constraints. This motivates the User Preference Violation eval.
+- **Cooperative communication:** the agent should avoid shifting burden back to the user when enough information is already available. This motivates the Unnecessary Clarification eval.
+
 ### 4. Agent security evals
 
 These are intended for agentic systems that may use tools, retrieved context, memory, files, APIs, or external actions.
