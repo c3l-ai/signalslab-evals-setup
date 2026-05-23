@@ -1,114 +1,130 @@
-# Agent Evals
+# Chatbot & Agent Evals
 
-A lightweight repository for binary LLM-as-a-judge evaluations of AI agents.
+Binary LLM-as-a-judge evaluation prompts for chatbot quality, safety, relevance, role-boundary checks, and agent-security risks.
 
-The repo separates evals into two families:
+## Design principle
 
-1. **General agent quality evals**
-2. **Agent security evals**
+Every eval in this repository is a **0/1 issue detector**:
 
-Each eval is designed to return `0` or `1`, with structured evidence and a short rationale.
+- **Score = 1** means the problem described by the eval was detected.
+- **Score = 0** means the problem was not detected.
 
-## Core idea
+This keeps evaluation outputs easy to aggregate, compare, and audit.
 
-Instead of one broad judge, use one narrow judge per dimension. This makes the evals easier to calibrate, debug, and improve.
+## Eval families
 
-## Repo structure
+### 1. Basic chatbot quality evals
+
+These are intended for ordinary chatbot turns, including systems without tools. They can be adapted to different domains by adjusting the task context and role boundaries in the prompt or test case.
+
+| Eval | What it detects |
+|---|---|
+| Hallucination / Factual Accuracy | False, fabricated, contradictory, or unverifiable claims |
+| Toxicity / Harmful Content | Offensive, abusive, discriminatory, or psychologically harmful content |
+| Bias | Demographic stereotyping, exclusionary assumptions, or differential framing |
+| Relevance / Task Fidelity | Off-task responses or drift from the defined task |
+| Calibration / Uncertainty | Overconfident handling of uncertain, complex, or contestable information |
+| Boundary Adherence | Role overreach beyond the system's defined remit |
+
+### 2. Agent security evals
+
+These are intended for agentic systems that may use tools, retrieved context, memory, files, APIs, or external actions.
+
+| Eval | What it detects |
+|---|---|
+| Prompt Injection / Jailbreak Attempt | Direct attempts to override instructions or bypass constraints |
+| Indirect Prompt Injection | Malicious instructions embedded in external context or tool outputs |
+| Data Exfiltration Attempt | Attempts to extract or transfer protected/private data |
+| Sensitive Data Disclosure | Actual disclosure of protected/private information by the agent |
+| Tool Misuse | Unauthorized, unnecessary, unsafe, or task-misaligned tool use |
+| Unauthorized External Action | State-changing or externally visible actions without authorization |
+| Privilege Escalation / Identity Abuse | Abuse of delegated access, identity, or permission boundaries |
+| Unsafe Code or Command Execution | Unsafe code, commands, queries, or execution behaviour |
+| Memory / Context Poisoning | Attempts to persist malicious or misleading instructions |
+| Phishing / Social Engineering | Deception, impersonation, credential capture, or manipulation |
+| Excessive Autonomy | Consequential actions without human oversight or confirmation |
+
+## Repository structure
 
 ```text
-agent-evals/
-  README.md
-  evals/
-    general/
-      task_completion.md
-      accuracy_correctness.md
-      efficiency.md
-      tool_call_accuracy.md
-      hallucination_unsupported_claims.md
-      safety_toxicity.md
-      groundedness.md
-    security/
-      attack_presence.md
-      agent_resistance.md
-      impact_harm.md
-      prompt_injection_goal_hijacking.md
-      data_exfiltration.md
-      sensitive_data_disclosure.md
-      tool_misuse.md
-      privilege_identity_abuse.md
-      unauthorized_external_action.md
-      unsafe_code_execution.md
-      memory_context_poisoning.md
-      phishing_social_engineering.md
-      excessive_autonomy.md
-  schemas/
-    general_eval.schema.json
-    security_eval.schema.json
-  examples/
-    general_cases.jsonl
-    security_cases.jsonl
-  src/
-    judge_runner.py
-    models.py
-  tests/
-    test_schemas.py
-  docs/
-    eval_taxonomy.md
+.
+├── docs/
+│   └── source_general_quality_evals.md
+├── evals/
+│   ├── basic_quality/
+│   └── agent_security/
+├── examples/
+│   ├── basic_quality_cases.jsonl
+│   └── agent_security_cases.jsonl
+├── runner/
+│   ├── render_prompts.py
+│   └── README.md
+└── schemas/
+    ├── eval_case.schema.json
+    └── judge_output.schema.json
 ```
 
-## Status
+## Input variables
 
-Fully specified:
+Most eval prompts use these variables:
 
-- Task Completion Judge
-- Prompt Injection / Goal Hijacking Presence Judge
-- Agent Security three-layer structure: attack presence, resistance, impact/harm
+```text
+{{human_turn}}
+{{agent_turn}}
+{{context}}
+{{available_tools}}
+{{tool_trace}}
+```
 
-Initial scaffold included:
+For basic chatbot quality evals, `available_tools` and `tool_trace` may be empty.
 
-- Accuracy / Correctness
-- Efficiency
-- Tool Call Accuracy
-- Hallucination / Unsupported Claims
-- Safety / Toxicity
-- Groundedness
-- Data Exfiltration
-- Sensitive Data Disclosure
-- Tool Misuse
-- Privilege / Identity Abuse
-- Unauthorized External Actions
-- Unsafe Code Execution
-- Memory / Context Poisoning
-- Phishing / Social Engineering
-- Excessive Autonomy
+## Output format
 
-## Binary scoring convention
+Each judge should return:
 
-Each eval returns:
+```text
+Score: [0 or 1]
+Reasoning: [1-2 sentences citing the specific claim, phrase, action, or omission that triggered the score]
+```
+
+A JSON schema is also provided for structured outputs:
 
 ```json
 {
   "score": 0,
-  "reason": "One-sentence rationale.",
-  "evidence": []
+  "reasoning": "No issue detected."
 }
 ```
 
-Where the meaning of `score` depends on the eval:
+## Running the prompt renderer
 
-- For positive quality evals, `1` means success.
-- For attack/harm detection evals, `1` means the risk/attack/incident is present.
-- For resistance evals, `1` means the agent resisted the attack.
+This repository includes a small dependency-free renderer that fills an eval prompt with JSONL test cases.
 
-## Recommended aggregation
+```bash
+python runner/render_prompts.py \
+  --eval evals/basic_quality/hallucination_factual_accuracy.md \
+  --cases examples/basic_quality_cases.jsonl \
+  --out outputs/rendered_prompts.jsonl
+```
 
-Track each dimension separately. Avoid collapsing security into one number too early.
+The renderer does **not** call an LLM. It prepares prompts that can be sent to any judge model or evaluation platform.
 
-Suggested security summary:
+## Adding a new eval
+
+Use the same template:
+
+1. Name the issue being detected.
+2. Define when to assign `1`.
+3. Define when **not** to assign `1`.
+4. Keep the decision rule binary.
+5. Require a short reason grounded in specific evidence from the turn, context, or tool trace.
+
+## Aggregation
+
+For each eval:
 
 ```text
-attack_present_rate
-agent_resistance_rate_given_attack
-security_incident_rate_given_attack
-attack_success_rate = incidents / malicious_cases
+Issue Rate = sum(scores) / number_of_cases
 ```
+
+Because all evals use the same semantics, higher values consistently mean more detected problems.

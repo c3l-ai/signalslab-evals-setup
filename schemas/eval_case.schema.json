@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvalCase",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "eval",
+    "human_turn",
+    "agent_turn",
+    "expected_score"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "eval": {
+      "type": "string",
+      "description": "Eval path or slug"
+    },
+    "human_turn": {
+      "type": "string"
+    },
+    "agent_turn": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string",
+      "default": ""
+    },
+    "available_tools": {
+      "type": "string",
+      "default": ""
+    },
+    "tool_trace": {
+      "type": "string",
+      "default": ""
+    },
+    "expected_score": {
+      "type": "integer",
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

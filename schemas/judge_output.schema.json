@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JudgeOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "score",
+    "reasoning"
+  ],
+  "properties": {
+    "score": {
+      "type": "integer",
+      "enum": [
+        0,
+        1
+      ],
+      "description": "1 = issue detected, 0 = no issue detected"
+    },
+    "reasoning": {
+      "type": "string",
+      "minLength": 1,
+      "description": "1-2 sentence explanation grounded in specific evidence"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional short evidence snippets"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}
