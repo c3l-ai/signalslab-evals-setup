@@ -66,17 +66,23 @@ These are intended for agentic systems that may use tools, retrieved context, me
 
 ## Input variables
 
-Most eval prompts use these variables:
+Most eval prompts use some or all of the following variables. For ordinary chatbot turns, only `human_turn`, `agent_turn`, and sometimes `context` are needed. For agentic systems, `available_tools` and `tool_trace` help the judge evaluate tool use and security behaviour.
 
-```text
-{{human_turn}}
-{{agent_turn}}
-{{context}}
-{{available_tools}}
-{{tool_trace}}
-```
+| Variable | Meaning | Typical use | Example |
+|---|---|---|---|
+| `{{human_turn}}` | The user's message for the turn being evaluated. | Used by all evals to understand what the user asked for, what constraints were given, and whether the response was relevant. | `Can you summarize this article in three bullet points?` |
+| `{{agent_turn}}` | The chatbot or agent response being evaluated. | Used by all evals as the primary object of judgment. | `Here are three key points: ...` |
+| `{{context}}` | Any additional information available to the agent or judge, such as retrieved passages, uploaded-document excerpts, prior conversation, system role description, task instructions, or reference material. | Used for hallucination, groundedness, relevance, calibration, boundary adherence, and indirect prompt-injection checks. Leave empty if no extra context was provided. | `Retrieved passage: The report states that enrolments increased by 12% in 2024.` |
+| `{{available_tools}}` | The tools the agent was allowed to use in this turn, including each tool's name and purpose. | Used for agent and security evals to determine whether tool use was available, necessary, appropriate, or risky. Leave empty for non-tool chatbot evals. | `search_web: Search the public web; read_file: Read uploaded files; send_email: Send email from the user's account.` |
+| `{{tool_trace}}` | The tools the agent actually called, including inputs, outputs, and any externally visible or state-changing actions. | Used for tool misuse, unauthorized action, data disclosure, excessive autonomy, and other security evals. Leave empty if no tools were called. | `Tool call: send_email(to=external@example.com, subject=Notes); Result: email sent.` |
 
-For basic chatbot quality evals, `available_tools` and `tool_trace` may be empty.
+### Notes
+
+- `context` can include trusted material, untrusted material, or both. For security evals, clearly label untrusted content such as webpages, emails, retrieved documents, or tool outputs.
+- `available_tools` describes what the agent *could* have used.
+- `tool_trace` describes what the agent *actually* used.
+- If a variable is not relevant to a case, set it to an empty string, `None`, or another explicit placeholder supported by your runner.
+- Do not include private or sensitive data in eval cases unless the eval is explicitly designed to test handling of that data.
 
 ## Output format
 
