@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SecurityEvalResult",
+  "type": "object",
+  "properties": {
+    "eval_name": {"type": "string"},
+    "score": {"type": "integer", "enum": [0, 1]},
+    "reason": {"type": "string"},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "categories": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["eval_name", "score", "reason"],
+  "additionalProperties": true
+}
