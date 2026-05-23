@@ -125,6 +125,38 @@ Use the same template:
 4. Keep the decision rule binary.
 5. Require a short reason grounded in specific evidence from the turn, context, or tool trace.
 
+
+## References and background resources
+
+These resources informed the terminology and structure used in the eval set. They are background references only; the eval prompts are intentionally kept self-contained so they can be adapted to different chatbot and agent contexts.
+
+### LLM-as-a-judge and evaluation design
+
+- Zheng et al. (2023), **Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena**: foundational work on using LLMs as evaluators, including known issues such as position bias, verbosity bias, self-preference bias, and the need for calibration.  
+  https://arxiv.org/abs/2306.05685
+- DeepEval documentation: examples of LLM-as-a-judge metrics such as hallucination, answer relevancy, task completion, and faithfulness-style checks.  
+  https://deepeval.com/docs/metrics-hallucination
+- Ragas documentation: RAG-oriented evaluation concepts such as faithfulness, answer relevancy, context precision, and context recall.  
+  https://docs.ragas.io/en/v0.1.21/concepts/metrics/
+
+### Agent security and prompt-injection risks
+
+- OWASP, **AI Agent Security Cheat Sheet**: agent-specific risks including prompt injection, tool abuse, memory poisoning, goal hijacking, excessive autonomy, and high-impact action abuse.  
+  https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html
+- OWASP, **Top 10 for Large Language Model Applications 2025**: application-level LLM risks, including prompt injection and sensitive information disclosure.  
+  https://owasp.org/www-project-top-10-for-large-language-model-applications/
+- OWASP, **LLM01: Prompt Injection**: direct and indirect prompt-injection patterns and consequences such as unauthorized function access, sensitive information disclosure, and output manipulation.  
+  https://genai.owasp.org/llmrisk/llm01-prompt-injection/
+- OpenAI, **Understanding prompt injections**: explains prompt injection as a social-engineering attack against AI systems, especially when third-party content enters the conversation context.  
+  https://openai.com/safety/prompt-injections/
+- MITRE ATLAS: knowledge base of adversary tactics and techniques for AI-enabled systems.  
+  https://atlas.mitre.org/
+
+### AI risk-management context
+
+- NIST, **Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile**: broader risk-management framing for generative AI systems.  
+  https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence
+
 ## Aggregation
 
 For each eval:
