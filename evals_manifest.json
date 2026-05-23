@@ -1,6 +1,6 @@
 {
-  "name": "educational-chatbot-agent-evals",
-  "description": "Binary LLM-as-a-judge eval prompts for educational chatbot quality and agent security.",
+  "name": "chatbot-agent-evals",
+  "description": "Binary LLM-as-a-judge eval prompts for chatbot quality, helpfulness, conversation continuity, and agent security.",
   "scoring": {
     "0": "no issue detected",
     "1": "issue detected"
@@ -13,6 +13,18 @@
       "hallucination_factual_accuracy.md",
       "relevance_task_fidelity.md",
       "toxicity_harmful_content.md"
+    ],
+    "helpfulness_usability": [
+      "actionability.md",
+      "clarity_coherence.md",
+      "completeness.md",
+      "conciseness.md"
+    ],
+    "conversation_state": [
+      "context_retention_failure.md",
+      "contradiction.md",
+      "unnecessary_clarification.md",
+      "user_preference_violation.md"
     ],
     "agent_security": [
       "data_exfiltration_attempt.md",

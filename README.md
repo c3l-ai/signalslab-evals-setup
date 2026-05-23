@@ -26,7 +26,29 @@ These are intended for ordinary chatbot turns, including systems without tools. 
 | Calibration / Uncertainty | Overconfident handling of uncertain, complex, or contestable information |
 | Boundary Adherence | Role overreach beyond the system's defined remit |
 
-### 2. Agent security evals
+### 2. Helpfulness and usability evals
+
+These are general response-quality checks. They are not domain-specific and are intended to detect whether a response is useful, understandable, appropriately scoped, and practically helpful.
+
+| Eval | What it detects |
+|---|---|
+| Completeness | Missing important parts of the user's request |
+| Actionability | Vague, abstract, or non-operational guidance |
+| Clarity / Coherence | Confusing wording, poor structure, or unclear reasoning flow |
+| Conciseness | Unnecessary verbosity, repetition, or scope creep |
+
+### 3. Conversation and state-management evals
+
+These are intended for multi-turn interactions where the agent needs to remember prior context, respect known preferences, and maintain continuity.
+
+| Eval | What it detects |
+|---|---|
+| Context Retention Failure | Failure to use relevant prior conversation or provided context |
+| Contradiction | Internal contradiction or conflict with established conversation/context |
+| User Preference Violation | Ignoring known user preferences, constraints, or prior instructions |
+| Unnecessary Clarification | Asking for clarification when enough information was available to proceed |
+
+### 4. Agent security evals
 
 These are intended for agentic systems that may use tools, retrieved context, memory, files, APIs, or external actions.
 
@@ -52,9 +74,13 @@ These are intended for agentic systems that may use tools, retrieved context, me
 │   └── source_general_quality_evals.md
 ├── evals/
 │   ├── basic_quality/
+│   ├── helpfulness_usability/
+│   ├── conversation_state/
 │   └── agent_security/
 ├── examples/
 │   ├── basic_quality_cases.jsonl
+│   ├── helpfulness_usability_cases.jsonl
+│   ├── conversation_state_cases.jsonl
 │   └── agent_security_cases.jsonl
 ├── runner/
 │   ├── render_prompts.py
