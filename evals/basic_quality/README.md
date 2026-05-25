@@ -1,6 +1,6 @@
 # Basic Chatbot Quality Evals
 
-These evals are copied from the educational chatbot LLM-as-judge prompt set and use the shared convention:
+These evals provide general chatbot quality checks and use the shared convention:
 
 - `1` = issue detected
 - `0` = no issue detected
